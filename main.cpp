@@ -5,6 +5,11 @@
 #include <SDL2/SDL.h>
 #include <stdio.h>
 
+
+const int WINDOW_WIDTH = 64;
+const int WINDOW_HEIGHT = 32;
+
+
 uint8_t memory[4096];
 int program_counter;
 uint16_t index_register;
@@ -31,40 +36,23 @@ int main() {
     int size = read_file_into_memory("IBMLogo.ch8", memory);
 
     SDL_Window* window = NULL;
-    SDL_Surface* screenSurface = NULL;
+    SDL_Renderer* renderer = NULL;
 
-    if( SDL_Init( SDL_INIT_VIDEO ) < 0 )
-    {
-        printf( "SDL could not initialize! SDL_Error: %s\n", SDL_GetError() );
-    } else {
-        //Create window
-        window = SDL_CreateWindow( "SDL Tutorial", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, 64, 32, SDL_WINDOW_SHOWN );
-        
-        if( window == NULL )
-        {
-            printf( "Window could not be created! SDL_Error: %s\n", SDL_GetError() );
-        } else
-        {
-            //Get window surface
-            screenSurface = SDL_GetWindowSurface( window );
-
-            //Fill the surface white
-            SDL_FillRect( screenSurface, NULL, SDL_MapRGB( screenSurface->format, 0xFF, 0xFF, 0xFF ) );
-            
-            //Update the surface
-            SDL_UpdateWindowSurface( window );
-
-            //Hack to get window to stay up
-            SDL_Event e; bool quit = false; while( quit == false ){ while( SDL_PollEvent( &e ) ){ if( e.type == SDL_QUIT ) quit = true; } }
-        }
+    // Initialize Window
+    if(SDL_CreateWindowAndRenderer(WINDOW_WIDTH, WINDOW_HEIGHT, 0, &window, &renderer) < 0) {
+        std::cout << SDL_GetError() << std::endl;
+        return 1;
     }
 
-    
+    // Display blank, white screen
+    SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
+    SDL_RenderClear(renderer);
+    SDL_RenderPresent(renderer);
 
-    //Destroy window
-    SDL_DestroyWindow( window );
-    //Quit SDL subsystems
-    SDL_Quit();
+    SDL_DestroyWindow(window);
+    SDL_DestroyRenderer(renderer);
+
+    SDL_Quit(); //Quit SDL subsystems
 
     return 0;
 }
