@@ -9,7 +9,7 @@
 
 const int WINDOW_WIDTH = 64;
 const int WINDOW_HEIGHT = 32;
-const int SCALE = 4;
+const int SCALE = 8;
 
 
 uint8_t ram[4096];
@@ -65,10 +65,12 @@ int main() {
 
         // Possible variables
         uint8_t second_nibble = ((instruction >> 8) & 0x0F);
-        uint8_t third_nibble = instruction & 0xF0;
+        uint8_t third_nibble = (instruction & 0xF0) >> 4;
         uint8_t fourth_nibble = instruction & 0x0F;
         uint8_t second_byte = instruction & 0x00FF;
         uint16_t ram_address = instruction & 0x0FFF;
+
+        std::cout << "0x" << std::hex << instruction << std::dec << " ";
 
         switch (instruction & 0xF000)
         {
@@ -106,16 +108,11 @@ int main() {
             uint8_t x_start = registers[second_nibble] % 64;
             uint8_t y = registers[third_nibble] % 32;
 
-            std::cout << "Vx: " << +second_nibble << " Vy: " << +third_nibble << std::endl;
-            std::cout << "x: " << +x_start << " y: " << +y << " N: " << +fourth_nibble << std::endl;
-
             registers[0xF] = 0;
 
             for(int row = 0; row < fourth_nibble; row++) {
                 uint8_t sprite_data = ram[index_register + row];
                 uint8_t x = x_start;
-
-                std::cout << std::endl;
 
                 for(int i = 0; i < 8; i++) {
                     uint8_t current_pixel = (sprite_data >> (7-i)) & 1;
