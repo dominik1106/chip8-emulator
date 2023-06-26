@@ -10,7 +10,7 @@
 const int WINDOW_WIDTH = 64;
 const int WINDOW_HEIGHT = 32;
 const int SCALE = 8;
-
+bool CHIP48 = true;
 
 uint8_t ram[4096];
 int program_counter;
@@ -97,6 +97,48 @@ int main() {
         case 0x7000:
             std::cout << "Adding to Register" << std::endl;
             registers[second_nibble] += second_byte;
+            break;
+        case 0x8000:
+            switch (instruction & 0x00F)
+            {
+            case 0x0: // Set
+                registers[second_nibble] = registers[third_nibble];
+                break;
+            case 0x1: // Bin. OR
+                registers[second_nibble] |= registers[third_nibble];
+                break;
+            case 0x2: // Bin. AND
+                registers[second_nibble] &= registers[third_nibble];
+                break;
+            case 0x3:
+                registers[second_nibble] ^= registers[third_nibble];
+                break;
+            case 0x4:
+                registers[second_nibble] += registers[third_nibble];
+                break;
+            case 0x5:
+                if(registers[second_nibble] > registers[third_nibble]) registers[0xF] = 1;
+                else if(registers[second_nibble] < registers[third_nibble]) registers[0xF] = 0;
+
+                registers[second_nibble] = registers[second_nibble] - registers[third_nibble];
+                break;
+            case 0x7:
+                if(registers[second_nibble] > registers[third_nibble]) registers[0xF] = 0;
+                else if(registers[second_nibble] < registers[third_nibble]) registers[0xF] = 1;
+
+                registers[second_nibble] = registers[third_nibble] - registers[second_nibble];
+                break;
+            case 0x6:
+                if(CHIP48) registers[second_nibble] = registers[third_nibble];
+                registers[0xF] = registers[second_nibble] & 0b00000001;
+                registers[second_nibble] >>= 1;
+                break;
+            case 0xE:
+                if(CHIP48) registers[second_nibble] = registers[third_nibble];
+                registers[0xF] = registers[second_nibble] & 0b10000000;
+                registers[second_nibble] <<= 1;
+                break;
+            }
             break;
         case 0xA000:
             std::cout << "Setting Index Register";
