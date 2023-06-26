@@ -216,6 +216,18 @@ int main() {
                 index_register = 0x050 + 5 * (registers[second_nibble] & 0x0F);
                 break;
             }
+            case 0x55:
+                for(int i = 0; i <= second_nibble; i++) {
+                    ram[index_register + i] = registers[i];
+                }
+                if(CHIP48) index_register += second_nibble;
+                break;
+            case 0x65:
+                for(int i = 0; i <= second_nibble; i++) {
+                     registers[i] = ram[index_register + i];
+                }
+                if(CHIP48) index_register += second_nibble;
+                break;
             break;
         }
 
