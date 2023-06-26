@@ -216,6 +216,13 @@ int main() {
                 index_register = 0x050 + 5 * (registers[second_nibble] & 0x0F);
                 break;
             }
+            case 0x33:
+                uint8_t number = registers[second_nibble];
+                for(int i = 2; i >= 0; i--) {
+                    ram[index_register + i] = number % 10;
+                    number /= 10;
+                }
+                break;
             case 0x55:
                 for(int i = 0; i <= second_nibble; i++) {
                     ram[index_register + i] = registers[i];
