@@ -54,6 +54,47 @@ int read_file_into_ram(std::string path, uint8_t* mem) {
     return file_size;
 }
 
+// Hashmap?
+uint8_t scancode_to_hex(SDL_Keycode scancode) {
+    switch (scancode)
+    {
+    case SDL_SCANCODE_1:
+        return 0x1;
+    case SDL_SCANCODE_2:
+        return 0x2;
+    case SDL_SCANCODE_3:
+        return 0x3;
+    case SDL_SCANCODE_4:
+        return 0xC;
+    case SDL_SCANCODE_Q:
+        return 0x4;
+    case SDL_SCANCODE_W:
+        return 0x5;
+    case SDL_SCANCODE_E:
+        return 0x6;
+    case SDL_SCANCODE_R:
+        return 0xD;
+    case SDL_SCANCODE_A:
+        return 0x7;
+    case SDL_SCANCODE_S:
+        return 0x8;
+    case SDL_SCANCODE_D:
+        return 0x9;
+    case SDL_SCANCODE_F:
+        return 0xE;
+    case SDL_SCANCODE_Z:
+        return 0xA;
+    case SDL_SCANCODE_X:
+        return 0x0;
+    case SDL_SCANCODE_C:
+        return 0xB;
+    case SDL_SCANCODE_V:
+        return 0xF;
+    }
+
+    return -1;
+}
+
 
 int main() {
     SDL_Window* window = NULL;
@@ -89,75 +130,14 @@ int main() {
         if(get_key_blocking) { 
             SDL_Event e;
 
+            // While loop instead? go through all pressed keys?
+            // Different event handling entirely?
             if(SDL_PollEvent(&e) != 0 && e.type == SDL_KEYUP) {
-                switch (e.key.keysym.sym)
-                {
-                case SDL_SCANCODE_1:
-                    registers[get_key_blocking_x] = 0x1;
+                uint8_t key = scancode_to_hex(e.key.keysym.sym);
+                if(key != -1) {
+                    registers[get_key_blocking_x] = key;
                     get_key_blocking = false;
-                    break;
-                case SDL_SCANCODE_2:
-                    registers[get_key_blocking_x] = 0x2;
-                    get_key_blocking = false;
-                    break;
-                case SDL_SCANCODE_3:
-                    registers[get_key_blocking_x] = 0x3;
-                    get_key_blocking = false;
-                    break;
-                case SDL_SCANCODE_4:
-                    registers[get_key_blocking_x] = 0xC;
-                    get_key_blocking = false;
-                    break;
-                case SDL_SCANCODE_Q:
-                    registers[get_key_blocking_x] = 0x4;
-                    get_key_blocking = false;
-                    break;
-                case SDL_SCANCODE_W:
-                    registers[get_key_blocking_x] = 0x5;
-                    get_key_blocking = false;
-                    break;
-                case SDL_SCANCODE_E:
-                    registers[get_key_blocking_x] = 0x6;
-                    get_key_blocking = false;
-                    break;
-                case SDL_SCANCODE_R:
-                    registers[get_key_blocking_x] = 0xD;
-                    get_key_blocking = false;
-                    break;
-                case SDL_SCANCODE_A:
-                    registers[get_key_blocking_x] = 0x7;
-                    get_key_blocking = false;
-                    break;
-                case SDL_SCANCODE_S:
-                    registers[get_key_blocking_x] = 0x8;
-                    get_key_blocking = false;
-                    break;
-                case SDL_SCANCODE_D:
-                    registers[get_key_blocking_x] = 0x9;
-                    get_key_blocking = false;
-                    break;
-                case SDL_SCANCODE_F:
-                    registers[get_key_blocking_x] = 0xE;
-                    get_key_blocking = false;
-                    break;
-                case SDL_SCANCODE_Z:
-                    registers[get_key_blocking_x] = 0xA;
-                    get_key_blocking = false;
-                    break;
-                case SDL_SCANCODE_X:
-                    registers[get_key_blocking_x] = 0x0;
-                    get_key_blocking = false;
-                    break;
-                case SDL_SCANCODE_C:
-                    registers[get_key_blocking_x] = 0xB;
-                    get_key_blocking = false;
-                    break;
-                case SDL_SCANCODE_V:
-                    registers[get_key_blocking_x] = 0xF;
-                    get_key_blocking = false;
-                    break;
                 }
-
             }
         } else {
             uint16_t instruction = (ram[program_counter] << 8) | ram[program_counter+1];
