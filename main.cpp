@@ -189,6 +189,15 @@ int main() {
                 std::cout << "Jump" << std::endl;
                 program_counter = 512 + ram_address;
                 break;
+            case 0x3000:
+                if(registers[second_nibble] == second_byte) program_counter += 2;
+                break;
+            case 0x4000:
+                if(registers[second_nibble] != second_byte) program_counter += 2;
+                break;
+            case 0x5000:
+                if(registers[second_nibble] == registers[third_nibble]) program_counter += 2;
+                break;
             // Set register 0x0F00 to 0x00FF
             case 0x6000:
                 std::cout << "Setting Register" << std::endl;
@@ -240,6 +249,9 @@ int main() {
                     registers[second_nibble] <<= 1;
                     break;
                 }
+                break;
+            case 0x9000:
+                if(registers[second_nibble] != registers[third_nibble]) program_counter += 2;
                 break;
             case 0xA000:
                 std::cout << "Setting Index Register";
